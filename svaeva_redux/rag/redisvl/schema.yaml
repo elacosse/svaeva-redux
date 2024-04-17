@@ -1,0 +1,22 @@
+version: '0.1.0'
+
+index:
+  name: consonancia
+  prefix: consonancia_conversations
+
+fields:
+    - name: user_id
+      type: tag
+    - name: group_id
+      type: tag
+    - name: image_bytes
+      type: by 
+    - name: interaction_count
+      type: numeric
+    - name: user_embedding
+      type: vector
+      attrs:
+        algorithm: flat
+        dims: 3
+        distance_metric: cosine
+        datatype: float32
