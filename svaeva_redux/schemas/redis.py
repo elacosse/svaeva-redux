@@ -25,6 +25,7 @@ class ConversationModel(JsonModel):
     vlm_system_prompt: str = Field("", index=True)
     chat_history_length: int = Field(10)
     engine: str = Field(index=True)
+    engine_type: str = Field(index=True)
     temperature: float = Field(0.7, ge=0.0, le=1.0)
     max_tokens: int = Field(150, gt=0)
     model_token_limit: int = Field(8192, gt=0)
