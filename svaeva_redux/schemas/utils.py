@@ -3,6 +3,7 @@ import logging
 import dotenv
 import numpy as np
 from redis_om import Migrator
+from redis_om.model.model import NotFoundError
 
 from svaeva_redux.prompts.consonancia import lm_system_prompt as lm_system_prompt_consonancia
 from svaeva_redux.prompts.consonancia import vlm_system_prompt as vlm_system_prompt_consonancia
@@ -83,6 +84,10 @@ def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = "")
     # Update user avatars
     try:
         user = UserImageModel.get(user_id)
+    except Exception as e:
+        if isinstance(e, NotFoundError):
+            user = UserImageModel(id=user_id)
+    try:
         if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
             user.avatar_image_bytes_history.append(user.avatar_image_bytes)
             user.avatar_image_prompt_history.append(user.avatar_image_prompt)
@@ -98,6 +103,10 @@ async def async_update_user_avatar(user_id: str, image_bytes: bytes, image_promp
     # Update user avatars
     try:
         user = UserImageModel.get(user_id)
+    except Exception as e:
+        if isinstance(e, NotFoundError):
+            user = UserImageModel(id=user_id)
+    try:
         user.avatar_image_bytes = image_bytes
         user.avatar_image_prompt = image_prompt
         if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
