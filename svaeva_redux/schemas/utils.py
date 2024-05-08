@@ -24,6 +24,7 @@ def initialize_redis():
         "lm_system_prompt": "You are a helpful assistant.",
         "vlm_system_prompt": "Tell me what this image is.",
         "engine": "gpt-4",
+        "engine_type": "openai",
         "temperature": 0.5,
         "max_tokens": 150,
         "model_token_limit": 8192,
@@ -40,6 +41,7 @@ def initialize_redis():
         "lm_system_prompt": "You are a helpful assistant.",
         "vlm_system_prompt": "Tell me what this image isn't is.",
         "engine": "gpt-4",
+        "engine_type": "openai",
         "temperature": 0.5,
         "max_tokens": 150,
         "model_token_limit": 8192,
@@ -56,6 +58,7 @@ def initialize_redis():
         "lm_system_prompt": lm_system_prompt_consonancia,
         "vlm_system_prompt": vlm_system_prompt_consonancia,
         "engine": "gpt-4",
+        "engine_type": "openai",
         "temperature": 0.5,
         "max_tokens": 150,
         "model_token_limit": 8192,
@@ -80,13 +83,13 @@ def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = "")
     # Update user avatars
     try:
         user = UserImageModel.get(user_id)
-
         if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
             user.avatar_image_bytes_history.append(user.avatar_image_bytes)
             user.avatar_image_prompt_history.append(user.avatar_image_prompt)
         user.avatar_image_bytes = image_bytes
         user.avatar_image_prompt = image_prompt
         user.save()
+        logger.info(f"Updated UserImageModel image id: {user_id}")
     except Exception as e:
         logger.error(f"Failed to update user avatar: {e}")
 
@@ -101,6 +104,7 @@ async def async_update_user_avatar(user_id: str, image_bytes: bytes, image_promp
             user.avatar_image_bytes_history.append(image_bytes)
             user.avatar_image_prompt_history.append(image_prompt)
         user.save()
+        logger.info(f"Updated UserImageModel image id: {user_id}")
     except Exception as e:
         logger.error(f"Failed to update user avatar: {e}")
 
@@ -120,6 +124,7 @@ def update_user_conversation_embedding(user_id: str, embedding_array: np.ndarray
         user = UserModel.get(user_id)
         user.conversation_embedding = embedding_array
         user.save()
+        logger.info(f"Updated UserModel embedding id: {user_id}")
     except Exception as e:
         logger.error(f"Failed to update user conversation embedding: {e}")
 
@@ -138,5 +143,6 @@ async def async_update_user_conversation_embedding(user_id: str, embedding_array
         user = UserModel.get(user_id)
         user.conversation_embedding = embedding_array
         user.save()
+        logger.info(f"Updated UserModel embedding id: {user_id}")
     except Exception as e:
         logger.error(f"Failed to update user avatar: {e}")
