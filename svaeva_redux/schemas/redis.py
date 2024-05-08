@@ -71,9 +71,7 @@ class UserModel(JsonModel):
     )
     language_code: Optional[str] = Field(index=True, description="ISO 3166-1 alpha-2 country code")
     english_proficiency: Optional[str] = Field(regex="^(A1|A2|B1|B2|C1|C2)$", description="CEFR level")
-    avatar_image_bytes: Optional[bytes] = Field(index=False, description="Avatar Image")
-    avatar_image_prompt: Optional[str] = Field(index=False, description="Avatar Image Prompt")
-    conversation_embedding: Optional[List[float]] = Field(index=False, description="Conversation Embedding")
+    conversation_embedding: Optional[List[float]] = Field([], index=False, description="Conversation Embedding")
     date_created_timestamp: Optional[float] = Field(index=True)
     date_updated_timestamp: Optional[float] = Field(index=True)
     date_accessed_timestamp: Optional[float] = Field(index=True)
@@ -93,6 +91,107 @@ class UserModel(JsonModel):
     def increment_interaction_count(self, **kwargs) -> None:
         self.interaction_count += 1
         self.date_accessed_timestamp = datetime.now().timestamp()
+        super().save()
+
+    def __getattribute__(self, name):
+        object.__setattr__(self, "date_accessed", datetime.now())
+        object.__setattr__(self, "date_accessed_timestamp", datetime.now().timestamp())
+        return object.__getattribute__(self, name)
+
+    def __setattr__(self, name, value) -> None:
+        object.__setattr__(self, "date_updated", datetime.now())
+        object.__setattr__(self, "date_updated_timestamp", datetime.now().timestamp())
+        object.__setattr__(self, name, value)
+
+    def __str__(self):
+        attributes = []
+        for attribute, value in vars(self).items():
+            attributes.append(f"{attribute}: {value}")
+        return "\n".join(attributes)
+
+    def __eq__(self, other) -> bool:
+        for attribute, value in vars(self).items():
+            if attribute == "password" or attribute == "date_accessed":
+                continue
+            if value != getattr(other, attribute):
+                return False
+        return True
+
+    class Meta:
+        database = redis_connection
+
+
+class UserImageModel(JsonModel):
+    version: str = "1.0"
+    commit: str = "commit"
+    id: Optional[str] = Field(index=True, primary_key=True)
+    avatar_image_bytes: Optional[bytes] = Field(index=False, description="Avatar Image")
+    avatar_image_prompt: Optional[str] = Field(index=False, description="Avatar Image Prompt")
+    avatar_image_bytes_history: Optional[List[bytes]] = Field([], index=False, description="Avatar Image History")
+    avatar_image_prompt_history: Optional[List[str]] = Field([], index=False, description="Avatar Image Prompt History")
+    date_created_timestamp: Optional[float] = Field(index=True)
+    date_updated_timestamp: Optional[float] = Field(index=True)
+    date_accessed_timestamp: Optional[float] = Field(index=True)
+
+    def save(self) -> None:
+        now = datetime.now()
+        if self.id is None:
+            self.id = str(uuid.uuid4())
+        if self.date_created_timestamp is None:
+            self.date_created_timestamp = now.timestamp()
+        if self.date_updated_timestamp is None:
+            self.date_updated_timestamp = now.timestamp()
+        if self.date_accessed_timestamp is None:
+            self.date_accessed_timestamp = now.timestamp()
+        super().save()
+
+    def __getattribute__(self, name):
+        object.__setattr__(self, "date_accessed", datetime.now())
+        object.__setattr__(self, "date_accessed_timestamp", datetime.now().timestamp())
+        return object.__getattribute__(self, name)
+
+    def __setattr__(self, name, value) -> None:
+        object.__setattr__(self, "date_updated", datetime.now())
+        object.__setattr__(self, "date_updated_timestamp", datetime.now().timestamp())
+        object.__setattr__(self, name, value)
+
+    def __str__(self):
+        attributes = []
+        for attribute, value in vars(self).items():
+            attributes.append(f"{attribute}: {value}")
+        return "\n".join(attributes)
+
+    def __eq__(self, other) -> bool:
+        for attribute, value in vars(self).items():
+            if attribute == "password" or attribute == "date_accessed":
+                continue
+            if value != getattr(other, attribute):
+                return False
+        return True
+
+    class Meta:
+        database = redis_connection
+
+
+class UserVideoModel(JsonModel):
+    version: str = "1.0"
+    commit: str = "commit"
+    id: Optional[str] = Field(index=True, primary_key=True)
+    avatar_video_bytes: Optional[bytes] = Field(index=False, description="Avatar Video")
+    date_created_timestamp: Optional[float] = Field(index=True)
+    date_updated_timestamp: Optional[float] = Field(index=True)
+    date_accessed_timestamp: Optional[float] = Field(index=True)
+
+    def save(self) -> None:
+        now = datetime.now()
+        if self.id is None:
+            self.id = str(uuid.uuid4())
+        if self.date_created_timestamp is None:
+            self.date_created_timestamp = now.timestamp()
+        if self.date_updated_timestamp is None:
+            self.date_updated_timestamp = now.timestamp()
+        if self.date_accessed_timestamp is None:
+            self.date_accessed_timestamp = now.timestamp()
         super().save()
 
     def __getattribute__(self, name):

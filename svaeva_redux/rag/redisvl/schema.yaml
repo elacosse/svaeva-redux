@@ -9,8 +9,6 @@ fields:
       type: tag
     - name: group_id
       type: tag
-    - name: image_bytes
-      type: by 
     - name: interaction_count
       type: numeric
     - name: user_embedding

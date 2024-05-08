@@ -20,7 +20,6 @@ def retrieve_redis_windowed_chat_history_as_text(
         key_prefix=key_prefix,
         chat_history_length=chat_history_length,
     )
-    logger.info(f"Retrieved chat history for session {session_id}")
     conversation = ""
     for message in history.messages:
         if message.type == "human":

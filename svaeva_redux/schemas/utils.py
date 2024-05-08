@@ -6,7 +6,7 @@ from redis_om import Migrator
 
 from svaeva_redux.prompts.consonancia import lm_system_prompt as lm_system_prompt_consonancia
 from svaeva_redux.prompts.consonancia import vlm_system_prompt as vlm_system_prompt_consonancia
-from svaeva_redux.schemas.redis import ConversationModel, UserModel
+from svaeva_redux.schemas.redis import ConversationModel, UserImageModel, UserModel
 
 # Enable logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -79,8 +79,11 @@ def initialize_redis():
 def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = ""):
     # Update user avatars
     try:
-        user = UserModel.get(user_id)
-        # Image processing? or just save the bytes?
+        user = UserImageModel.get(user_id)
+
+        if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
+            user.avatar_image_bytes_history.append(user.avatar_image_bytes)
+            user.avatar_image_prompt_history.append(user.avatar_image_prompt)
         user.avatar_image_bytes = image_bytes
         user.avatar_image_prompt = image_prompt
         user.save()
@@ -91,10 +94,12 @@ def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = "")
 async def async_update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = ""):
     # Update user avatars
     try:
-        user = UserModel.get(user_id)
-        # Image processing? or just save the bytes?
+        user = UserImageModel.get(user_id)
         user.avatar_image_bytes = image_bytes
         user.avatar_image_prompt = image_prompt
+        if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
+            user.avatar_image_bytes_history.append(image_bytes)
+            user.avatar_image_prompt_history.append(image_prompt)
         user.save()
     except Exception as e:
         logger.error(f"Failed to update user avatar: {e}")
