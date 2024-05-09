@@ -126,6 +126,8 @@ class UserImageModel(JsonModel):
     version: str = "1.0"
     commit: str = "commit"
     id: Optional[str] = Field(index=True, primary_key=True)
+    group_id: str = Field(index=True)
+    platform_id: str = Field(index=True)
     avatar_image_bytes: Optional[bytes] = Field(index=False, description="Avatar Image")
     avatar_image_prompt: Optional[str] = Field(index=False, description="Avatar Image Prompt")
     avatar_image_bytes_history: Optional[List[bytes]] = Field([], index=False, description="Avatar Image History")
@@ -178,7 +180,9 @@ class UserVideoModel(JsonModel):
     version: str = "1.0"
     commit: str = "commit"
     id: Optional[str] = Field(index=True, primary_key=True)
-    avatar_video_bytes: Optional[bytes] = Field(index=False, description="Avatar Video")
+    group_id: str = Field(index=True)
+    platform_id: str = Field(index=True)
+    avatar_video_bytes: Optional[List[bytes]] = Field(index=False, description="Avatar Video")
     date_created_timestamp: Optional[float] = Field(index=True)
     date_updated_timestamp: Optional[float] = Field(index=True)
     date_accessed_timestamp: Optional[float] = Field(index=True)
