@@ -182,7 +182,7 @@ class UserVideoModel(JsonModel):
     id: Optional[str] = Field(index=True, primary_key=True)
     group_id: Optional[str] = Field(index=True)
     platform_id: Optional[str] = Field(index=True)
-    avatar_video_bytes: Optional[bytes] = Field(index=False, description="Avatar Video")
+    avatar_video_bytes: Optional[List[bytes]] = Field(index=False, description="Avatar Video")
     date_created_timestamp: Optional[float] = Field(index=True)
     date_updated_timestamp: Optional[float] = Field(index=True)
     date_accessed_timestamp: Optional[float] = Field(index=True)
