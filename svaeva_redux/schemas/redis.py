@@ -51,6 +51,7 @@ class UserModel(JsonModel):
     group_id: str = Field(index=True)
     platform_id: str = Field(index=True)
     interaction_count: int = Field(0, ge=0, index=True)
+    flagged: bool = Field(False, index=True)
     first_name: Optional[str] = Field(index=True)
     last_name: Optional[str] = Field(index=True)
     username: Optional[str] = Field(index=True)

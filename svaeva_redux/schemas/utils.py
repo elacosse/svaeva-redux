@@ -87,6 +87,7 @@ def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = "")
     except Exception as e:
         if isinstance(e, NotFoundError):
             user = UserImageModel(id=user_id)
+            user.save()
     try:
         if user.avatar_image_bytes is not None and user.avatar_image_prompt is not None:
             user.avatar_image_bytes_history.append(user.avatar_image_bytes)
@@ -106,6 +107,7 @@ async def async_update_user_avatar(user_id: str, image_bytes: bytes, image_promp
     except Exception as e:
         if isinstance(e, NotFoundError):
             user = UserImageModel(id=user_id)
+            user.save()
     try:
         user.avatar_image_bytes = image_bytes
         user.avatar_image_prompt = image_prompt
