@@ -10,7 +10,7 @@ from redis_om import (
     JsonModel,
 )
 
-dotenv.load_dotenv(dotenv.find_dotenv())
+dotenv.load_dotenv(override=True)
 redis_connection = redis.Redis(
     host=os.getenv("REDIS_HOST"),
     port=int(os.getenv("REDIS_PORT")),
