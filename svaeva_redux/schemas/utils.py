@@ -7,6 +7,7 @@ from redis_om.model.model import NotFoundError
 
 from svaeva_redux.prompts.consonancia import lm_system_prompt as lm_system_prompt_consonancia
 from svaeva_redux.prompts.consonancia import vlm_system_prompt as vlm_system_prompt_consonancia
+from svaeva_redux.prompts.consonancia_retorno import lm_system_prompt as lm_system_prompt_consonancia_retorno
 from svaeva_redux.schemas.redis import ConversationModel, UserImageModel, UserModel
 
 # Enable logging
@@ -68,16 +69,35 @@ def initialize_redis():
         "presence_penalty": 0.0,
         "author": "master",
     }
+
+    consonancia_retorno = {
+        "name": "consonancia-retorno",
+        "chain_type": "chain_with_history",
+        "chat_history_length": 30,
+        "lm_system_prompt": lm_system_prompt_consonancia_retorno,
+        "vlm_system_prompt": vlm_system_prompt_consonancia,
+        "engine": "gpt-4-turbo-preview",
+        "engine_type": "openai",
+        "temperature": 0.7,
+        "max_tokens": 150,
+        "model_token_limit": 8192,
+        "top_p": 1.0,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0,
+        "author": "master",
+    }
     # Create a RediSearch index
     Migrator().run()
     ConversationModel(**default_0).save()
     ConversationModel(**default_1).save()
     ConversationModel(**consonancia).save()
+    ConversationModel(**consonancia_retorno).save()
 
     # Find All ConversationRedisModels
     models = ConversationModel.find((ConversationModel.chain_type == "chain_with_history")).all()
     models = sorted(models, key=lambda x: x.date_created_timestamp)
-    logger.info("Initialized ConversationRedisModels: ", [model.name for model in models])
+    for model in models:
+        logger.info(f"Initialized ConversationModel: {model.name}")
 
 
 def update_user_avatar(user_id: str, image_bytes: bytes, image_prompt: str = ""):

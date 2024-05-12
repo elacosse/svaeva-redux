@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "svaeva-redux"
-version = "0.1.4"
+version = "0.1.5"
 description = "`svaeva-redux` is a Python cli/package"
 readme = "README.md"
 authors = ["svaeva-redux <eric.lacosse@mailbox.org>"]
